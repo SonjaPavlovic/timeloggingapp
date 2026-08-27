@@ -1,0 +1,47 @@
+<section class="panel">
+  <h2>Manage Activity Types</h2>
+
+  @if (error()) {
+    <p class="error" role="alert">{{ error() }}</p>
+  }
+
+  <form class="create-form" (ngSubmit)="create()">
+    <input
+      type="text"
+      name="newName"
+      placeholder="New activity type name"
+      [ngModel]="newName()"
+      (ngModelChange)="newName.set($event)"
+      maxlength="100"
+      required
+    />
+    <button type="submit" [disabled]="!newName().trim()">Add</button>
+  </form>
+
+  @if (loading()) {
+    <p>Loading…</p>
+  } @else if (types().length === 0) {
+    <p>No activity types yet.</p>
+  } @else {
+    <ul class="type-list">
+      @for (type of types(); track type.id) {
+        <li>
+          @if (editingId() === type.id) {
+            <input
+              type="text"
+              [ngModel]="editingName()"
+              (ngModelChange)="editingName.set($event)"
+              maxlength="100"
+            />
+            <button type="button" (click)="saveEdit(type.id)" [disabled]="!editingName().trim()">Save</button>
+            <button type="button" (click)="cancelEdit()">Cancel</button>
+          } @else {
+            <span class="name">{{ type.name }}</span>
+            <button type="button" (click)="startEdit(type)">Rename</button>
+            <button type="button" (click)="remove(type.id)">Delete</button>
+          }
+        </li>
+      }
+    </ul>
+  }
+</section>

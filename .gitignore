@@ -1,1 +1,16 @@
 .dev-its/progress.json
+
+# dependencies
+node_modules/
+
+# build output
+dist/
+.angular/
+
+# SQLite database file
+backend/data/
+*.db
+*.db-journal
+
+# logs
+npm-debug.log*
