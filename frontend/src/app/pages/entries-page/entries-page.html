@@ -1,0 +1,94 @@
+<section class="panel">
+  <h2>{{ editingId() === null ? 'New Entry' : 'Edit Entry' }}</h2>
+
+  @if (error()) {
+    <p class="error" role="alert">{{ error() }}</p>
+  }
+
+  <form [formGroup]="form" (ngSubmit)="submit()" class="entry-form">
+    <div class="field">
+      <label for="activityTypeId">Activity Type</label>
+      <select id="activityTypeId" formControlName="activityTypeId">
+        <option [ngValue]="null" disabled>Select a type…</option>
+        @for (type of activityTypes(); track type.id) {
+          <option [ngValue]="type.id">{{ type.name }}</option>
+        }
+      </select>
+    </div>
+
+    <div class="field">
+      <label for="description">Description</label>
+      <textarea id="description" formControlName="description" maxlength="500" rows="2"></textarea>
+      @if (form.controls.description.touched && form.controls.description.invalid) {
+        <p class="field-error">Description is required (max 500 characters).</p>
+      }
+    </div>
+
+    <div class="field">
+      <label for="date">Date</label>
+      <input id="date" type="date" formControlName="date" />
+    </div>
+
+    <div class="field">
+      <label for="startTime">Start Time</label>
+      <input id="startTime" type="time" step="1" formControlName="startTime" />
+    </div>
+
+    <div class="field">
+      <label for="endTime">End Time</label>
+      <input id="endTime" type="time" step="1" formControlName="endTime" />
+      @if (form.errors?.['zeroLength'] && (form.touched || form.dirty)) {
+        <p class="field-error">End time must not equal start time.</p>
+      }
+    </div>
+
+    <div class="actions">
+      <button type="submit" [disabled]="form.invalid || submitting()">
+        {{ editingId() === null ? 'Add Entry' : 'Save Changes' }}
+      </button>
+      @if (editingId() !== null) {
+        <button type="button" (click)="cancelEdit()">Cancel</button>
+      }
+    </div>
+  </form>
+</section>
+
+<section class="panel">
+  <h2>Entries</h2>
+
+  @if (loading()) {
+    <p>Loading…</p>
+  } @else if (entries().length === 0) {
+    <p>No entries yet.</p>
+  } @else {
+    <table class="entry-table">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Start</th>
+          <th>End</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Duration</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (entry of entries(); track entry.id) {
+          <tr>
+            <td>{{ entry.date }}</td>
+            <td>{{ entry.startTime }}</td>
+            <td>{{ entry.endTime }}</td>
+            <td>{{ entry.activityType.name }}</td>
+            <td>{{ entry.description }}</td>
+            <td>{{ formatDuration(entry.durationMinutes) }}</td>
+            <td class="row-actions">
+              <button type="button" (click)="startEdit(entry)">Edit</button>
+              <button type="button" (click)="remove(entry)">Delete</button>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+</section>

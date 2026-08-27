@@ -1,0 +1,71 @@
+@if (error()) {
+  <p class="error" role="alert">{{ error() }}</p>
+}
+
+@if (loading()) {
+  <p>Loading…</p>
+} @else {
+  <section class="panel">
+    <h2>Totals per Day</h2>
+    @if (byDay().length === 0) {
+      <p>No entries yet.</p>
+    } @else {
+      <table class="totals-table">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Entries</th>
+            <th>Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (row of byDay(); track row.date) {
+            <tr>
+              <td>{{ row.date }}</td>
+              <td>{{ row.entryCount }}</td>
+              <td>{{ formatDuration(row.totalMinutes) }}</td>
+            </tr>
+          }
+        </tbody>
+        <tfoot>
+          <tr>
+            <td colspan="2">Grand Total</td>
+            <td>{{ formatDuration(byDayGrandTotal()) }}</td>
+          </tr>
+        </tfoot>
+      </table>
+    }
+  </section>
+
+  <section class="panel">
+    <h2>Totals per Activity</h2>
+    @if (byActivity().length === 0) {
+      <p>No entries yet.</p>
+    } @else {
+      <table class="totals-table">
+        <thead>
+          <tr>
+            <th>Activity Type</th>
+            <th>Entries</th>
+            <th>Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (row of byActivity(); track row.activityTypeId) {
+            <tr>
+              <td>{{ row.activityTypeName }}</td>
+              <td>{{ row.entryCount }}</td>
+              <td>{{ formatDuration(row.totalMinutes) }}</td>
+            </tr>
+          }
+        </tbody>
+        <tfoot>
+          <tr>
+            <td colspan="2">Grand Total</td>
+            <td>{{ formatDuration(byActivityGrandTotal()) }}</td>
+          </tr>
+        </tfoot>
+      </table>
+    }
+  </section>
+}
